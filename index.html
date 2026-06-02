@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="yi" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>אַקאַונטינג אַפּ - מכון פליאה</title>
+    
+    <!-- Google Fonts & Material Symbols -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Roboto', 'Heebo', 'sans-serif'],
+                    },
+                    colors: {
+                        google: {
+                            blue: '#1a73e8',
+                            blueDark: '#1557b0',
+                            blueLight: '#e8f0fe',
+                            blueText: '#1967d2',
+                            red: '#ea4335',
+                            redLight: '#fce8e6',
+                            yellow: '#fbbc04',
+                            yellowLight: '#fef7e0',
+                            green: '#34a853',
+                            greenLight: '#e6f4ea',
+                            textMain: '#202124',
+                            textMuted: '#5f6368',
+                            bg: '#f8f9fa',
+                            surface: '#ffffff',
+                            border: '#dadce0',
+                            hover: '#f1f3f4'
+                        }
+                    },
+                    boxShadow: {
+                        'google-card': '0 1px 2px 0 rgba(60,64,67,0.3), 0 1px 3px 1px rgba(60,64,67,0.15)',
+                        'google-modal': '0 24px 38px 3px rgba(0,0,0,0.14), 0 9px 46px 8px rgba(0,0,0,0.12), 0 11px 15px -7px rgba(0,0,0,0.2)',
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        :root {
+            --color-bg: #f8f9fa;
+            --color-surface: #ffffff;
+            --color-text: #202124;
+            --color-text-muted: #5f6368;
+            --color-border: #dadce0;
+            --color-hover: #f1f3f4;
+        }
+
+        html.dark {
+            --color-bg: #121212;
+            --color-surface: #1e1e1e;
+            --color-text: #e8eaed;
+            --color-text-muted: #9aa0a6;
+            --color-border: #3c4043;
+            --color-hover: #2c2c2c;
+        }
+
+        body {
+            background-color: var(--color-bg);
+            color: var(--color-text);
+            margin: 0;
+            overflow: hidden;
+        }
+
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #dadce0;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #bdc1c6;
+        }
+
+        html.dark ::-webkit-scrollbar-thumb {
+            background: #3c4043;
+        }
+
+        html.dark ::-webkit-scrollbar-thumb:hover {
+            background: #5f6368;
+        }
+
+        .google-input {
+            border: 1px solid var(--color-border);
+            border-radius: 4px;
+            padding: 10px 14px;
+            transition: all 0.2s;
+            outline: none;
+            background-color: var(--color-surface);
+            color: var(--color-text);
+        }
+
+        .google-input:focus {
+            border-color: #1a73e8;
+            box-shadow: inset 0 0 0 1px #1a73e8;
+        }
+
+        @media print {
+            body { background: white !important; overflow: visible !important; }
+            .no-print { display: none !important; }
+            .print-only { display: block !important; }
+        }
+    </style>
+</head>
+<body class="h-screen w-full flex text-[var(--color-text)]">
+
+    <!-- Sidebar -->
+    <aside class="w-64 flex-shrink-0 flex flex-col no-print bg-[var(--color-surface)] border-l border-[var(--color-border)] z-10">
+        <div class="h-16 flex items-center px-6 gap-3 border-b border-[var(--color-border)]">
+            <span class="material-symbols-outlined text-google-blue text-3xl">account_balance_wallet</span>
+            <span class="text-xl font-medium text-[var(--color-text-muted)] tracking-tight">פּליה</span>
+        </div>
+
+        <div class="px-3 mt-4 mb-6">
+            <button onclick="openModal()" class="flex items-center gap-3 bg-[var(--color-surface)] text-[var(--color-text-muted)] border border-[var(--color-border)] shadow-sm hover:shadow-md hover:bg-[var(--color-hover)] transition-shadow rounded-2xl px-4 py-3 font-medium cursor-pointer w-full">
+                <span class="material-symbols-outlined text-google-blue">add</span>
+                נייע רעקארד
+            </button>
+        </div>
+
+        <nav class="flex-1 px-3 space-y-1">
+            <button id="nav-ledger" onclick="switchTab('ledger')" class="w-full flex items-center gap-4 px-4 py-2.5 rounded-l-full bg-google-blueLight text-google-blueText font-medium">
+                <span class="material-symbols-outlined">table_view</span>
+                לעדזשער
+            </button>
+            <button id="nav-reports" onclick="switchTab('reports')" class="w-full flex items-center gap-4 px-4 py-2.5 rounded-l-full text-[var(--color-text-muted)] hover:bg-[var(--color-hover)] font-medium transition-colors">
+                <span class="material-symbols-outlined">assessment</span>
+                רעפּאָרטן
+            </button>
+            <button id="nav-invoice" onclick="switchTab('invoice')" class="w-full flex items-center gap-4 px-4 py-2.5 rounded-l-full text-[var(--color-text-muted)] hover:bg-[var(--color-hover)] font-medium transition-colors">
+                <span class="material-symbols-outlined">description</span>
+                אינוואיסן
+            </button>
+            <button id="nav-history" onclick="switchTab('history')" class="w-full flex items-center gap-4 px-4 py-2.5 rounded-l-full text-[var(--color-text-muted)] hover:bg-[var(--color-hover)] font-medium transition-colors">
+                <span class="material-symbols-outlined">history</span>
+                היסטאָריע
+            </button>
+        </nav>
+
+        <div class="px-3 py-4 border-t border-[var(--color-border)] space-y-2">
+            <button onclick="toggleDarkMode()" class="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-[var(--color-text-muted)] hover:bg-[var(--color-hover)] font-medium transition-colors text-sm">
+                <span class="material-symbols-outlined">dark_mode</span>
+                דארק מאד
+            </button>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="flex-1 flex flex-col h-full min-w-0 bg-[var(--color-bg)] relative">
+        
+        <!-- Header -->
+        <header class="h-16 flex items-center justify-between px-6 bg-[var(--color-surface)] border-b border-[var(--color-border)] no-print">
+            <div class="flex-1 max-w-2xl bg-[var(--color-hover)] rounded-lg px-4 py-2 flex items-center gap-3 border border-transparent focus-within:bg-[var(--color-surface)] focus-within:border-[var(--color-border)] focus-within:shadow-google-card transition-all" id="search-container">
+                <span class="material-symbols-outlined text-[var(--color-text-muted)]">search</span>
+                <input type="text" id="search-input" placeholder="זוך..." oninput="renderLedgerTable()" class="w-full bg-transparent border-none outline-none text-[var(--color-text)] placeholder-[var(--color-text-muted)]">
+            </div>
+
+            <div class="flex items-center gap-4 mr-4">
+                <button onclick="exportToCSV()" class="p-2 text-[var(--color-text-muted)] hover:bg-[var(--color-hover)] rounded-full transition-colors" title="עקספארט">
+                    <span class="material-symbols-outlined">download</span>
+                </button>
+                <button onclick="undo()" id="undo-btn" class="p-2 text-[var(--color-text-muted)] hover:bg-[var(--color-hover)] rounded-full transition-colors disabled:opacity-50" title="אונדו" disabled>
+                    <span class="material-symbols-outlined">undo</span>
+                </button>
+                <button onclick="redo()" id="redo-btn" class="p-2 text-[var(--color-text-muted)] hover:bg-[var(--color-hover)] rounded-full transition-colors disabled:opacity-50" title="רידו" disabled>
+                    <span class="material-symbols-outlined">redo</span>
+                </button>
+            </div>
+        </header>
+
+        <!-- Content Area -->
+        <div class="flex-1 overflow-auto relative">
+            
+            <!-- LEDGER VIEW -->
+            <div id="view-ledger" class="p-6 max-w-[1400px] mx-auto w-full">
+                
+                <!-- Summary Cards -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+                    <div class="bg-[var(--color-surface)] p-5 border border-[var(--color-border)] rounded-lg">
+                        <div class="flex items-center gap-2 text-[var(--color-text-muted)] mb-2">
+                            <span class="material-symbols-outlined text-sm">paid</span>
+                            <span class="text-sm font-medium">הכנסות</span>
+                        </div>
+                        <div class="text-2xl font-normal text-[var(--color-text)]" id="summary-income">$0.00</div>
+                    </div>
+                    
+                    <div class="bg-[var(--color-surface)] p-5 border border-[var(--color-border)] rounded-lg">
+                        <div class="flex items-center gap-2 text-[var(--color-text-muted)] mb-2">
+                            <span class="material-symbols-outlined text-sm text-google-red">hourglass_empty</span>
+                            <span class="text-sm font-medium text-google-red">חובות</span>
+                        </div>
+                        <div class="text-2xl font-normal text-[var(--color-text)]" id="summary-unpaid">$0.00</div>
+                    </div>
+                    
+                    <div class="bg-[var(--color-surface)] p-5 border border-[var(--color-border)] rounded-lg">
+                        <div class="flex items-center gap-2 text-[var(--color-text-muted)] mb-2">
+                            <span class="material-symbols-outlined text-sm text-google-yellow">trending_down</span>
+                            <span class="text-sm font-medium">הוצאות</span>
+                        </div>
+                        <div class="text-2xl font-normal text-[var(--color-text)]" id="summary-expenses">$0.00</div>
+                    </div>
+                    
+                    <div class="bg-[var(--color-surface)] p-5 border border-[var(--color-border)] rounded-lg">
+                        <div class="flex items-center gap-2 text-[var(--color-text-muted)] mb-2">
+                            <span class="material-symbols-outlined text-sm text-google-blue">balance</span>
+                            <span class="text-sm font-medium">מעשר (10%)</span>
+                        </div>
+                        <div class="text-2xl font-normal text-[var(--color-text)]" id="summary-maaser">$0.00</div>
+                    </div>
+                </div>
+
+                <!-- Filters -->
+                <div class="mb-4 flex gap-3 flex-wrap">
+                    <select id="filter-status" onchange="renderLedgerTable()" class="google-input text-sm py-1.5 px-3">
+                        <option value="all">אלע סטאטוסן</option>
+                        <option value="unpaid">בלויז אומבאצאלט</option>
+                        <option value="paid">בלויז באצאלט</option>
+                        <option value="expense">בלויז הוצאות</option>
+                    </select>
+                    <input type="date" id="filter-date-from" onchange="renderLedgerTable()" class="google-input text-sm py-1.5 px-3">
+                    <input type="date" id="filter-date-to" onchange="renderLedgerTable()" class="google-input text-sm py-1.5 px-3">
+                </div>
+
+                <!-- Table -->
+                <div class="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-lg overflow-hidden">
+                    
+                    <div class="px-4 py-3 border-b border-[var(--color-border)] flex justify-between items-center bg-[var(--color-surface)]">
+                        <h2 class="text-base font-medium text-[var(--color-text)]">לעדזשער רעקארדס</h2>
+                    </div>
+
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full text-right border-collapse">
+                            <thead>
+                                <tr class="bg-[var(--color-hover)] border-b border-[var(--color-border)]">
+                                    <th scope="col" class="px-6 py-3 text-sm font-medium text-[var(--color-text-muted)]">דאטום</th>
+                                    <th scope="col" class="px-6 py-3 text-sm font-medium text-[var(--color-text-muted)]">קליענט</th>
+                                    <th scope="col" class="px-6 py-3 text-sm font-medium text-[var(--color-text-muted)]">קאטעגאריע</th>
+                                    <th scope="col" class="px-6 py-3 text-sm font-medium text-[var(--color-text-muted)]">סכום</th>
+                                    <th scope="col" class="px-6 py-3 text-sm font-medium text-[var(--color-text-muted)]">סטאטוס</th>
+                                    <th scope="col" class="px-6 py-3 text-sm font-medium text-[var(--color-text-muted)] text-center">אקציעס</th>
+                                </tr>
+                            </thead>
+                            <tbody id="ledger-table-body" class="divide-y divide-[var(--color-border)]">
+                            </tbody>
+                        </table>
+                        
+                        <div id="empty-state" class="p-10 text-center hidden">
+                            <span class="material-symbols-outlined text-[var(--color-text-muted)] text-4xl mb-3">inbox</span>
+                            <p class="text-sm text-[var(--color-text-muted)]">קיין רעקארדס נישט געפונען</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- REPORTS VIEW -->
+            <div id="view-reports" class="hidden p-6 max-w-[1400px] mx-auto w-full">
+                
+                <h1 class="text-2xl font-medium mb-6 text-[var(--color-text)]">רעפּאָרטן</h1>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <!-- Monthly Summary -->
+                    <div class="bg-[var(--color-surface)] p-6 border border-[var(--color-border)] rounded-lg">
+                        <h2 class="text-lg font-medium mb-4 text-[var(--color-text)]">מאנטלי סימארי</h2>
+                        <div id="monthly-report" class="space-y-3">
+                        </div>
+                    </div>
+
+                    <!-- Category Breakdown -->
+                    <div class="bg-[var(--color-surface)] p-6 border border-[var(--color-border)] rounded-lg">
+                        <h2 class="text-lg font-medium mb-4 text-[var(--color-text)]">קאטעגאריע אנאליזע</h2>
+                        <div id="category-report" class="space-y-3">
+                        </div>
+                    </div>
+
+                    <!-- Profit & Loss -->
+                    <div class="bg-[var(--color-surface)] p-6 border border-[var(--color-border)] rounded-lg col-span-1 lg:col-span-2">
+                        <h2 class="text-lg font-medium mb-4 text-[var(--color-text)]">פּראפיט / לאס</h2>
+                        <div class="space-y-2">
+                            <div class="flex justify-between">
+                                <span>הכנסות (באצאלט):</span>
+                                <span id="pl-income" class="font-medium">$0.00</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span>הוצאות:</span>
+                                <span id="pl-expenses" class="font-medium">$0.00</span>
+                            </div>
+                            <div class="flex justify-between pt-2 border-t border-[var(--color-border)]">
+                                <span>נקי פּראפיט:</span>
+                                <span id="pl-net" class="font-medium text-google-green">$0.00</span>
+                            </div>
+                            <div class="flex justify-between pt-2">
+                                <span>מעשר צו תן (10%):</span>
+                                <span id="pl-maaser" class="font-medium text-google-blue">$0.00</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- INVOICE VIEW -->
+            <div id="view-invoice" class="hidden h-full flex flex-col bg-[var(--color-bg)]">
+                
+                <div class="bg-[var(--color-surface)] border-b border-[var(--color-border)] px-4 py-3 no-print">
+                    <div class="flex flex-wrap justify-between items-center gap-3">
+                        <h1 class="text-lg font-medium text-[var(--color-text)]">אינוואיסן</h1>
+                        <div class="flex gap-2">
+                            <select id="import-client-select" onchange="importClientToInvoice()" class="google-input text-sm py-1.5 px-3 w-48">
+                                <option value="">-- אימפארטיר א חוב --</option>
+                            </select>
+                            <button onclick="createNewInvoice()" class="flex items-center gap-2 bg-google-blue text-white hover:bg-google-blueDark px-4 py-1.5 rounded-full font-medium text-sm transition-colors">
+                                <span class="material-symbols-outlined text-sm">add</span> נייע אינוואיס
+                            </button>
+                            <button onclick="exportInvoicePDF()" class="flex items-center gap-2 bg-google-blueLight text-google-blueText hover:bg-blue-100 px-4 py-1.5 rounded-full font-medium text-sm transition-colors">
+                                <span class="material-symbols-outlined text-sm">picture_as_pdf</span> פּיידיאף
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex-1 overflow-auto p-4 sm:p-8">
+                    
+                    <div class="max-w-[816px] mx-auto bg-[var(--color-surface)] shadow-google-card border border-[var(--color-border)] mb-10 p-12 sm:p-16 min-h-[1056px]" id="invoice-container">
+                        
+                        <div class="text-center mb-6">
+                             <h1 class="text-xs font-normal text-[var(--color-text)] mb-2">בעזהשי"ת</h1>
+                             <h2 class="text-3xl font-bold text-google-blue mb-4">אינוואיס</h2>
+                        </div>
+
+                        <div class="flex justify-between items-start mb-8 border-b-2 border-google-blue pb-4">
+                            <div class="flex-1">
+                                <div class="flex flex-col gap-2">
+                                     <div class="flex items-center gap-2">
+                                         <span class="text-sm font-bold w-32">Invoice #:</span>
+                                         <input type="text" id="inv-number" value="INV-001" class="text-sm text-[var(--color-text)] border-b border-[var(--color-border)] hover:border-google-blue focus:border-google-blue outline-none transition-colors w-32 bg-transparent">
+                                     </div>
+                                     <div class="flex items-center gap-2">
+                                         <span class="text-sm font-bold w-32">Date:</span>
+                                         <input type="date" id="inv-date" class="text-sm text-[var(--color-text)] border-none outline-none cursor-pointer bg-transparent">
+                                     </div>
+                                </div>
+                            </div>
+                            
+                            <div class="text-right w-64 flex flex-col gap-2">
+                                 <div class="flex items-center justify-end gap-2">
+                                     <input type="text" id="inv-client-name" class="text-sm text-[var(--color-text)] border-b border-[var(--color-border)] hover:border-google-blue focus:border-google-blue outline-none transition-colors w-40 text-right bg-transparent" placeholder="קליענט נאמען">
+                                     <span class="text-sm font-bold">Customer:</span>
+                                 </div>
+                                  <div class="flex items-center justify-end gap-2">
+                                     <input type="text" id="inv-client-phone" class="text-sm text-[var(--color-text)] border-b border-[var(--color-border)] hover:border-google-blue focus:border-google-blue outline-none transition-colors w-40 text-right bg-transparent" placeholder="טעלעפאן">
+                                     <span class="text-sm font-bold">Contact:</span>
+                                 </div>
+                            </div>
+                        </div>
+
+                        <!-- Items Table -->
+                        <div class="mb-10">
+                            <table class="w-full border-collapse border border-google-blue">
+                                <thead>
+                                    <tr>
+                                        <th class="bg-google-blue text-white text-center py-2 px-3 text-sm font-normal border border-white w-20">שעות</th>
+                                        <th class="bg-google-blue text-white text-left py-2 px-3 text-sm font-normal border border-white flex-1">דעטאלן</th>
+                                        <th class="bg-google-blue text-white text-left py-2 px-3 text-sm font-normal border border-white w-24">מחיר</th>
+                                        <th class="w-8 no-print border-none bg-transparent"></th>
+                                    </tr>
+                                </thead>
+                                <tbody id="invoice-items-body">
+                                </tbody>
+                            </table>
+                            
+                            <div class="py-3 px-2 no-print">
+                                <button type="button" onclick="addInvoiceItem()" class="text-google-blue hover:text-google-blueDark text-sm font-medium flex items-center gap-1 transition-colors">
+                                    <span class="material-symbols-outlined text-sm">add</span> לייג צו שורה
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Totals -->
+                        <div class="flex justify-end mt-10">
+                            <table class="w-72 border-collapse">
+                                 <tbody>
+                                     <tr>
+                                         <td class="py-2 px-3 text-sm font-bold text-right border-none">Price Total:</td>
+                                         <td class="py-2 px-3 text-sm text-right border-none"><span id="inv-price-total">$0.00</span></td>
+                                     </tr>
+                                     <tr>
+                                         <td class="py-2 px-3 text-sm font-bold text-right border-none">Subtotal:</td>
+                                         <td class="py-2 px-3 text-sm text-right border-none"><span id="inv-subtotal">$0.00</span></td>
+                                     </tr>
+                                     <tr>
+                                         <td class="py-2 px-3 text-sm font-bold text-right border-none border-b-2 border-google-blue">Sales Tax:</td>
+                                         <td class="py-2 px-3 text-sm text-right border-none border-b-2 border-google-blue">
+                                              <div class="flex items-center justify-end gap-1">
+                                                 <span>$</span>
+                                                 <input type="number" id="inv-tax-amount" value="0.00" min="0" step="0.01" class="w-16 bg-transparent border-none outline-none text-right" oninput="calculateInvoiceTotal()">
+                                             </div>
+                                         </td>
+                                     </tr>
+                                     <tr>
+                                         <td class="py-3 px-3 text-sm font-bold text-right border-none">Due:</td>
+                                         <td class="py-3 px-3 text-sm font-bold text-right border-none"><span id="inv-total">$0.00</span></td>
+                                     </tr>
+                                 </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="no-print bg-[var(--color-surface)] border-t border-[var(--color-border)] px-4 py-3">
+                    <button onclick="window.print()" class="flex items-center gap-2 bg-google-blue text-white hover:bg-google-blueDark px-4 py-2 rounded-lg font-medium text-sm transition-colors">
+                        <span class="material-symbols-outlined">print</span> דרוק
+                    </button>
+                </div>
+            </div>
+
+            <!-- HISTORY VIEW -->
+            <div id="view-history" class="hidden p-6 max-w-[800px] mx-auto w-full">
+                <h1 class="text-2xl font-medium mb-6 text-[var(--color-text)]">היסטאָריע</h1>
+                
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <!-- Undo History -->
+                    <div class="bg-[var(--color-surface)] p-6 border border-[var(--color-border)] rounded-lg">
+                        <h2 class="text-lg font-medium mb-4 text-[var(--color-text)]">אונדו</h2>
+                        <div id="undo-history" class="space-y-2 max-h-96 overflow-y-auto">
+                        </div>
+                    </div>
+
+                    <!-- Redo History -->
+                    <div class="bg-[var(--color-surface)] p-6 border border-[var(--color-border)] rounded-lg">
+                        <h2 class="text-lg font-medium mb-4 text-[var(--color-text)]">רידו</h2>
+                        <div id="redo-history" class="space-y-2 max-h-96 overflow-y-auto">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Modal -->
+    <div id="modal-overlay" class="fixed inset-0 bg-black bg-opacity-40 z-50 hidden items-center justify-center no-print backdrop-blur-sm">
+        
+        <div class="bg-[var(--color-surface)] rounded-lg shadow-google-modal w-full max-w-lg overflow-hidden transform scale-95 opacity-0 transition-all duration-200" id="modal-content">
+            
+            <div class="px-6 py-4 border-b border-[var(--color-border)] flex justify-between items-center">
+                <h2 class="text-lg font-medium text-[var(--color-text)]" id="form-title">נייע רעקארד</h2>
+                <button onclick="closeModal()" class="text-[var(--color-text-muted)] hover:bg-[var(--color-hover)] rounded-full p-1 transition-colors">
+                    <span class="material-symbols-outlined">close</span>
+                </button>
+            </div>
+
+            <form id="ledger-form" class="px-6 py-4">
+                <input type="hidden" id="entry-id">
+                
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-medium text-[var(--color-text-muted)] mb-1">דאטום</label>
+                        <input type="date" id="entry-date" required class="google-input w-full">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-xs font-medium text-[var(--color-text-muted)] mb-1">קליענט / פראיעקט</label>
+                        <input type="text" id="entry-client" required placeholder="נאמען..." class="google-input w-full">
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-medium text-[var(--color-text-muted)] mb-1">קאטעגאריע</label>
+                            <select id="entry-category" class="google-input w-full bg-[var(--color-surface)]">
+                                <option value="writing">שרייבן</option>
+                                <option value="editing">עדיטינג</option>
+                                <option value="consultation">קאנסולטינג</option>
+                                <option value="other">אנדערע</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-[var(--color-text-muted)] mb-1">סכום ($)</label>
+                            <input type="number" id="entry-amount" required step="0.01" min="0" placeholder="0.00" class="google-input w-full">
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-xs font-medium text-[var(--color-text-muted)] mb-1">סטאטוס</label>
+                        <select id="entry-status" class="google-input w-full bg-[var(--color-surface)]">
+                            <option value="unpaid">אומבאצאלט</option>
+                            <option value="paid">באצאלט</option>
+                            <option value="expense">הוצאה</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="mt-8 flex justify-end gap-3">
+                    <button type="button" onclick="closeModal()" class="px-5 py-2 text-google-blue font-medium hover:bg-google-blueLight rounded transition-colors text-sm">
+                        קענסעל
+                    </button>
+                    <button type="submit" id="submit-btn" class="px-5 py-2 bg-google-blue text-white font-medium hover:bg-google-blueDark rounded shadow-sm transition-colors text-sm">
+                        היט
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
